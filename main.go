@@ -5,30 +5,37 @@ import (
 	"time"
 )
 
-// Pulled from here:
-// https://blog.ropnop.com/learning-go-concurrency-from-factorio/
-
-func Inserter1(belt chan int) {
-	i := 0
+func drill(belt chan string, ore string) {
 	for {
 		time.Sleep(1 * time.Second)
-		belt <- i
-		i++
+		belt <- ore
 	}
 }
 
-func Inserter2(belt chan int) {
+func Inserter1(belt chan string) {
+	item := ``
+	for {
+		time.Sleep(1 * time.Second)
+		belt <- item
+	}
+}
+
+func Inserter2(belt chan string) {
+
 	for {
 		select {
-		case i := <-belt:
-			fmt.Printf("[Inserter2] I got %d\n", i)
+		case item := <-belt:
+			fmt.Printf("[Inserter2] I got %s\n", item)
 		}
 	}
 }
 
 func main() {
-	belt := make(chan int)
-	go Inserter1(belt)
+	belt := make(chan string)
+	go drill(belt, "Iron")
+	go drill(belt, "Iron")
+	go drill(belt, "Iron")
+	go drill(belt, "Iron")
 	go Inserter2(belt)
 	for {
 		// this loops forever so our "factory" never stops
